@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const formulario = document.querySelector('#formulario');
     const btnSubmit = document.querySelector('#formulario button[type="submit"]');
     const btnReset = document.querySelector('#formulario button[type="reset"]');
+    const spinner = document.querySelector('#spinner');
 
     // EventListeners
     cargarEventListeners();
@@ -20,20 +21,36 @@ document.addEventListener('DOMContentLoaded', function(){
         inputEmail.addEventListener('input', validar);
         inputAsunto.addEventListener('input', validar);
         inputMensaje.addEventListener('input', validar);
+    
+        formulario.addEventListener('submit', enviarEmail)
+
         btnReset.addEventListener('click', function(e) {
             e.preventDefault();
 
-            // reinciar el objeto
-            valoresFormulario.email = '';
-            valoresFormulario.asunto = '';
-            valoresFormulario.mensaje = '';
-            formulario.reset();
-
-            comprobarValoresFormulario();
+            resetFormulario();    
         })
     }
 
     // Funciones
+
+    function enviarEmail(e) {
+        e.preventDefault();
+
+        spinner.classList.add('flex');
+        spinner.classList.remove('hidden');
+
+        setTimeout(() => {
+            spinner.classList.remove('flex');
+            spinner.classList.add('hidden');
+
+            // reinciar el objeto
+            resetFormulario();
+
+        }, 3000);
+
+        
+    }
+
     function validar(e){
         if (e.target.value.trim() === "") {
             mostrarAlerta(`El campo ${e.target.id} es obligatorio`, e.target.parentElement);
@@ -93,6 +110,16 @@ document.addEventListener('DOMContentLoaded', function(){
             btnSubmit.classList.remove('opacity-50');
             btnSubmit.disabled = false;
         }
+    }
+
+    function resetFormulario () {
+        // reinciar el objeto
+            valoresFormulario.email = '';
+            valoresFormulario.asunto = '';
+            valoresFormulario.mensaje = '';
+            formulario.reset();
+
+            comprobarValoresFormulario();
     }
     
 });
