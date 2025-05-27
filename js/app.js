@@ -2,12 +2,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
     const valoresFormulario = {
         email: '',
+        cc: '',
         asunto: '',
         mensaje: ''
     }
 
     // Seleccionar elementos del interfaz
     const inputEmail = document.querySelector('#email');
+    const inputCC = document.querySelector('#cc');
     const inputAsunto = document.querySelector('#asunto');
     const inputMensaje = document.querySelector('#mensaje');
     const formulario = document.querySelector('#formulario');
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function(){
     cargarEventListeners();
     function cargarEventListeners() {
         inputEmail.addEventListener('input', validar);
+        inputCC.addEventListener('input', validar);
         inputAsunto.addEventListener('input', validar);
         inputMensaje.addEventListener('input', validar);
     
@@ -64,6 +67,13 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function validar(e){
+        if(e.target.id === 'cc' && !validarEmail(e.target.value)) {
+            mostrarAlerta('El email no es válido', e.target.parentElement)
+            valoresFormulario[e.target.name] = '';
+            comprobarValoresFormulario();
+            return;
+        }
+
         if (e.target.value.trim() === "") {
             mostrarAlerta(`El campo ${e.target.id} es obligatorio`, e.target.parentElement);
             valoresFormulario[e.target.name] = '';
@@ -115,7 +125,11 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function comprobarValoresFormulario(){
-        if(Object.values(valoresFormulario).includes('')){
+        const valoresFiltrados = Object.entries(valoresFormulario)
+        .filter(([clave, valor]) => clave !== 'cc') // Excluye el campo 'cc'
+        .map(([clave, valor]) => valor);
+        
+        if(valoresFiltrados.includes('')){
             btnSubmit.classList.add('opacity-50');
             btnSubmit.disabled = true;
         } else {
@@ -126,12 +140,18 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function resetFormulario () {
         // reinciar el objeto
-            valoresFormulario.email = '';
-            valoresFormulario.asunto = '';
-            valoresFormulario.mensaje = '';
-            formulario.reset();
+        valoresFormulario.email = '';
+        valoresFormulario.cc = '';
+        valoresFormulario.asunto = '';
+        valoresFormulario.mensaje = '';
 
-            comprobarValoresFormulario();
+        formulario.reset();
+
+        // Eliminar alertas que habia
+        const campos = [inputEmail, inputCC, inputAsunto, inputMensaje];
+        campos.forEach(input => limpiarAlerta(input.parentElement));
+
+        comprobarValoresFormulario();
     }
     
 });
